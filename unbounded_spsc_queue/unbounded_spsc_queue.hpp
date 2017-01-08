@@ -1,7 +1,7 @@
 #include <cstddef>
 #include <atomic>
 
-template <typename T> T load_acquire(const T *addr) {
+template <typename T> T load_consume(const T *addr) {
     T v = *const_cast<const T volatile *>(addr);
     std::atomic_signal_fence(std::memory_order_consume);
     return v;
@@ -16,10 +16,7 @@ size_t const cache_line_size = 64;
 
 template <typename T> class unbounded_spsc_queue {
   public:
-    unbounded_spsc_queue(void) {
-        node *n = new node();
-        head = first = tail_copy = tail = n;
-    }
+    unbounded_spsc_queue(void) { head = first = tail = tail_copy = new node(); }
 
     ~unbounded_spsc_queue(void) {
         node *n = first;
@@ -39,7 +36,8 @@ template <typename T> class unbounded_spsc_queue {
     }
 
     bool dequeue(T &data) {
-        if (load_acquire(&tail->next)) {
+        // be match to store_release(&head->next, n)
+        if (load_consume(&tail->next)) {
             data = tail->next->data;
             store_release(&tail, tail->next);
             return true;
@@ -54,31 +52,29 @@ template <typename T> class unbounded_spsc_queue {
         T data;
     };
 
-    node *alloc_node() {
+    node *alloc_node(void) {
         if (first != tail_copy) {
             node *n = first;
             first = first->next;
             return n;
         }
 
-        tail_copy = load_acquire(&tail);
+        // be match to store_release(&tail, tail->next)
+        tail_copy = load_consume(&tail);
+
         if (first != tail_copy) {
             node *n = first;
             first = first->next;
             return n;
         }
 
-        node *n = new node();
-        return n;
+        return new node();
     }
 
-    // consumer
     node *tail;
 
-    // padding forbid "False sharing"
-    char padding[cache_line_size];
+    char padding[64];
 
-    // producer
     node *head;
     node *first;
     node *tail_copy;
