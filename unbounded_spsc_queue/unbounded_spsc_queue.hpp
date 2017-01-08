@@ -12,8 +12,6 @@ template <typename T> void store_release(T *addr, T v) {
     *const_cast<T volatile *>(addr) = v;
 }
 
-size_t const cache_line_size = 64;
-
 template <typename T> class unbounded_spsc_queue {
   public:
     unbounded_spsc_queue(void) { head = first = tail = tail_copy = new node(); }
@@ -36,7 +34,7 @@ template <typename T> class unbounded_spsc_queue {
     }
 
     bool dequeue(T &data) {
-        // be match to store_release(&head->next, n)
+        // Be match to store_release(&head->next, n).
         if (load_consume(&tail->next)) {
             data = tail->next->data;
             store_release(&tail, tail->next);
@@ -52,6 +50,8 @@ template <typename T> class unbounded_spsc_queue {
         T data;
     };
 
+    static constexpr size_t CACHELINE = 64;
+
     node *alloc_node(void) {
         if (first != tail_copy) {
             node *n = first;
@@ -59,7 +59,7 @@ template <typename T> class unbounded_spsc_queue {
             return n;
         }
 
-        // be match to store_release(&tail, tail->next)
+        // Be match to store_release(&tail, tail->next).
         tail_copy = load_consume(&tail);
 
         if (first != tail_copy) {
@@ -71,11 +71,9 @@ template <typename T> class unbounded_spsc_queue {
         return new node();
     }
 
-    node *tail;
-
-    char padding[64];
-
-    node *head;
+    // Align to avoid false sharing between head and tail.
+    alignas(CACHELINE) node *tail;
+    alignas(CACHELINE) node *head;
     node *first;
     node *tail_copy;
 
