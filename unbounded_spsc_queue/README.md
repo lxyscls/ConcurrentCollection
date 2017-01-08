@@ -1,5 +1,5 @@
 # unbounded_spsc_queue.hpp
-Idea from 1024cores' [Unbounded SPSC Queue](1).
+1024cores' [Unbounded SPSC Queue](1).
 
 - Dequeue is always [wait-free](2).
 - Enqueue is wait-free except that there is no cache node.
