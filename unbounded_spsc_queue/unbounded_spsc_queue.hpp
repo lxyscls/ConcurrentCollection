@@ -71,8 +71,8 @@ template <typename T> class unbounded_spsc_queue {
         return new node();
     }
 
+    node *tail;
     // Align to avoid false sharing between head and tail.
-    alignas(CACHELINE) node *tail;
     alignas(CACHELINE) node *head;
     node *first;
     node *tail_copy;
