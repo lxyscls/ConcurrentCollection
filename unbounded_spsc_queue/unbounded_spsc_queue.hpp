@@ -28,16 +28,17 @@ template <typename T> class unbounded_spsc_queue {
     void enqueue(const T &data) {
         node *n = alloc_node();
         n->data = data;
-        n->next = nullptr;
-        store_release(&head->next, n);
+        n->next.store(nullptr, std::memory_order_relaxed);
+		head->next.store(n, std::memory_order_release);
         head = n;
     }
 
     bool dequeue(T &data) {
         // Be match to store_release(&head->next, n).
-        if (load_consume(&tail->next)) {
-            data = tail->next->data;
-            store_release(&tail, tail->next);
+		node *n = tail.load(std::memory_order_relaxed);
+		if (n->next.load(std::memory_order_consume)) {
+            data = n->next.load(std::memory_order_relaxed)->data;
+			tail.store(n->next.load(std::memory_order_relaxed), std::memory_order_release);
             return true;
         } else {
             return false;
@@ -46,7 +47,7 @@ template <typename T> class unbounded_spsc_queue {
 
   private:
     struct node {
-        node *next;
+        std::atomic<node *> next;
         T data;
     };
 
@@ -60,7 +61,7 @@ template <typename T> class unbounded_spsc_queue {
         }
 
         // Be match to store_release(&tail, tail->next).
-        tail_copy = load_consume(&tail);
+		tail_copy = tail.load(std::memory_order_consume);
 
         if (first != tail_copy) {
             node *n = first;
@@ -71,7 +72,7 @@ template <typename T> class unbounded_spsc_queue {
         return new node();
     }
 
-    alignas(CACHELINE) node *tail;
+    alignas(CACHELINE) std::atomic<node *> tail;
     // Align to avoid false sharing between head and tail.
     alignas(CACHELINE) node *head;
     node *first;
