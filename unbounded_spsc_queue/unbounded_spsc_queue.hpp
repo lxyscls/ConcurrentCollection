@@ -1,17 +1,6 @@
 #include <cstddef>
 #include <atomic>
 
-template <typename T> T load_consume(const T *addr) {
-    T v = *const_cast<const T volatile *>(addr);
-    std::atomic_signal_fence(std::memory_order_consume);
-    return v;
-}
-
-template <typename T> void store_release(T *addr, T v) {
-    std::atomic_signal_fence(std::memory_order_release);
-    *const_cast<T volatile *>(addr) = v;
-}
-
 template <typename T> class unbounded_spsc_queue {
   public:
     unbounded_spsc_queue(void) { head = first = tail = tail_copy = new node(); }
@@ -29,16 +18,15 @@ template <typename T> class unbounded_spsc_queue {
         node *n = alloc_node();
         n->data = data;
         n->next.store(nullptr, std::memory_order_relaxed);
-		head->next.store(n, std::memory_order_release);
+        head->next.store(n, std::memory_order_release);
         head = n;
     }
 
     bool dequeue(T &data) {
-        // Be match to store_release(&head->next, n).
-		node *n = tail.load(std::memory_order_relaxed);
-		if (n->next.load(std::memory_order_consume)) {
-            data = n->next.load(std::memory_order_relaxed)->data;
-			tail.store(n->next.load(std::memory_order_relaxed), std::memory_order_release);
+        node *n = tail.load(std::memory_order_relaxed);
+        if (n = n->next.load(std::memory_order_consume)) {
+            data = n->data;
+            tail.store(n, std::memory_order_release);
             return true;
         } else {
             return false;
@@ -60,9 +48,7 @@ template <typename T> class unbounded_spsc_queue {
             return n;
         }
 
-        // Be match to store_release(&tail, tail->next).
-		tail_copy = tail.load(std::memory_order_consume);
-
+        tail_copy = tail.load(std::memory_order_consume);
         if (first != tail_copy) {
             node *n = first;
             first = first->next;
