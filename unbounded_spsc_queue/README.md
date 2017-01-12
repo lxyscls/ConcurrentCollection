@@ -18,15 +18,15 @@ t.join();
 ```
 ## Usage
 
-- unbounded_spsc_queue<T>();
+- `unbounded_spsc_queue<T>();`
 
   Create a unbounded SPSC queue.
 
-- void enqueue(const T &v);
+- `void enqueue(const T &v);`  
 
   Enqueue an item using copy construction.
   
-- bool dequeue(T &v);
+- `bool dequeue(T &v);`
 
   Dequeue first elment of queue. Return 'true' on success and 'false' if queue is empty.
   
