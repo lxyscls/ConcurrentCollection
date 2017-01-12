@@ -14,6 +14,9 @@ template <typename T> class unbounded_spsc_queue {
         } while (n);
     }
 
+    unbounded_spsc_queue(const unbounded_spsc_queue &) = delete;
+    unbounded_spsc_queue &operator=(const unbounded_spsc_queue &) = delete;
+
     void enqueue(const T &data) {
         node *n = alloc_node();
         n->data = data;
@@ -63,7 +66,4 @@ template <typename T> class unbounded_spsc_queue {
     alignas(CACHELINE) node *head;
     node *first;
     node *tail_copy;
-
-    unbounded_spsc_queue(const unbounded_spsc_queue &);
-    unbounded_spsc_queue &operator=(const unbounded_spsc_queue &);
 };
