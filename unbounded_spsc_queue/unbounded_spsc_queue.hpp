@@ -66,4 +66,8 @@ template <typename T> class unbounded_spsc_queue {
     alignas(CACHELINE) node *head;
     node *first;
     node *tail_copy;
+
+    // Padding to avoid adjacent allocations to share cacheline.
+    char padding_
+        [CACHELINE - (sizeof(head) + sizeof(first) + sizeof(tail_copy))];
 };
