@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
         auto start = std::chrono::steady_clock::now();
         for (int i = 0; i < iters; ++i) {
             if (!q.enqueue(i))
-				--i;
+                --i;
         }
         t.join();
         auto stop = std::chrono::steady_clock::now();
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
             for (int v, i = 0; i < iters; ++i) {
                 if (q1.dequeue(v)) {
                     while (!q2.enqueue(v))
-						;
+                        ;
                 } else {
                     --i;
                 }
@@ -94,11 +94,11 @@ int main(int argc, char *argv[]) {
         auto start = std::chrono::steady_clock::now();
         for (int v, i = 0; i < iters; ++i) {
             if (q1.enqueue(i)) {
-				while (!q2.dequeue(v))
-				  ;
-			} else {
-				--i;
-			}
+                while (!q2.dequeue(v))
+                    ;
+            } else {
+                --i;
+            }
         }
         auto stop = std::chrono::steady_clock::now();
         t.join();
