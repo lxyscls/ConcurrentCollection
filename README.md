@@ -5,3 +5,5 @@
 ### Queue
 #### SPSC Queue
 >Unbounded SPSC Queue
+
+>Bounded SPSC Queue
