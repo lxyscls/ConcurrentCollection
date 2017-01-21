@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     {
         const int64_t iters = 1000000000;
-        spsc_queue<int, 512> q(-1);
+        spsc_queue<int, 256> q(-1);
         auto t = std::thread([&] {
             pinThread(cpu1);
             for (int v, i = 0; i < iters; ++i) {
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     {
         const int64_t iters = 100000000;
-        spsc_queue<int, 512> q1(-1), q2(-1);
+        spsc_queue<int, 256> q1(-1), q2(-1);
         auto t = std::thread([&] {
             pinThread(cpu1);
             for (int v, i = 0; i < iters; ++i) {

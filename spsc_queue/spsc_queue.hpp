@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <atomic>
 
 template <typename T, int capacity> class spsc_queue {
   public:
@@ -11,19 +12,19 @@ template <typename T, int capacity> class spsc_queue {
     spsc_queue &operator=(const spsc_queue &) = delete;
 
     bool enqueue(const T &data) {
-        if (buf[tail] == invalid_val) {
-            buf[tail] = data;
-            tail += (tail + 1 >= capacity) ? (1 - capacity) : 1;
+        if (buf[tail].load(std::memory_order_acquire) == invalid_val) {
+            buf[tail].store(data, std::memory_order_release);
+            tail = (tail + 1) % capacity;
             return true;
         }
         return false;
     }
 
     bool dequeue(T &data) {
-        if (buf[head] != invalid_val) {
-            data = buf[head];
-            buf[head] = invalid_val;
-            head += (head + 1 >= capacity) ? (1 - capacity) : 1;
+        if (buf[head].load(std::memory_order_acquire) != invalid_val) {
+            data = buf[head].load(std::memory_order_relaxed);
+            buf[head].store(invalid_val, std::memory_order_release);
+            head = (head + 1) % capacity;
             return true;
         }
         return false;
@@ -32,12 +33,11 @@ template <typename T, int capacity> class spsc_queue {
   private:
     static constexpr size_t CACHELINE = 64;
 
-    T invalid_val;
-
     alignas(CACHELINE) unsigned int head;
     alignas(CACHELINE) unsigned int tail;
 
     char padding[CACHELINE - sizeof(tail)];
 
-    T buf[capacity];
+    std::atomic<T> buf[capacity];
+    T invalid_val;
 };
