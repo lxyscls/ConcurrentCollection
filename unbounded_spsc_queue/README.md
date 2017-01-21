@@ -10,7 +10,7 @@
 unbounded_spsc_queue<int> q;
 auto t = std::thread([] {
   int v;
-  while (q.dequeue(v)) ;
+  while (!q.dequeue(v)) ;
   std::cout << v << std::endl;
 })
 q.enqueue(10);
