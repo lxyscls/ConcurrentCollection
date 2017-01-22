@@ -33,26 +33,5 @@ t.join();
 
 The **T** must be some primitive types or pointer.
   
-## Benchmarks
-
-Be the same as [rigtorp's SPSCQueue][3]'s.
-
-The following numbers are for a 2 socket machine with 2 x Intel(R) Xeon(R) CPU E5-2658 v3 @ 2.20GHz.
-
-| NUMA Node / Core / Hyper-Thread | Throughput (ops/ms) | Latency RTT (ns) |
-| ------------------------------- | -------------------:| ----------------:|
-| #0,#0,#0 & #0,#0,#1             |              192445 |               63 |
-| #0,#0,#0 & #0,#1,#0             |              190213 |              279 |
-| #0,#0,#0 & #1,#0,#0             |               94403 |              752 |
-
-[rigtorp's][3]
-
-| NUMA Node / Core / Hyper-Thread | Throughput (ops/ms) | Latency RTT (ns) |
-| ------------------------------- | -------------------:| ----------------:|
-| #0,#0,#0 & #0,#0,#1             |               41223 |              112 |
-| #0,#0,#0 & #0,#1,#0             |               20061 |              315 |
-| #0,#0,#0 & #1,#0,#0             |               15842 |              722 |
-  
 [1]: http://research.microsoft.com/en-us/um/people/lamport/pubs/proving.pdf
 [2]: https://en.wikipedia.org/wiki/Non-blocking_algorithm#Wait-freedom
-[3]: https://github.com/rigtorp/SPSCQueue
