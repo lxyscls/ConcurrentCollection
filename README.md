@@ -7,16 +7,16 @@
 #### SPSC Queue
 >In the end of 1970's, [Leslie Lamport][1] proved that, under Sequential Consistency memory model, a Single-Producer/Single-Consumer circular buffer can be implemented without using explicit synchronization mechanisms between the producer and the consumer. (From Massimo Torquati's [\<Single-Producer/Single-Consumer Queues on Shared Cache Multi-Core Systems\>][2])
 
-I have found two implementations of [Lamport's SPSC Queue][5] which is based on circular buffer from the Internet. One is [KjellKod.cc's][3], other is [rigtorp's][4].
+I have found two implementations of [Lamport's SPSC Queue][5] which is based on circular buffer from the Internet. One is [KjellKod.cc's][3], another is [rigtorp's][4]. And as below there are two other implementations, one is based on linked-list, another has made some improvements on [Lamport's][5]. 
 
 - Unbounded SPSC Queue
   
-  A list-based implementation from [1024core's][6].
+  A list-based implementation from [1024cores'][6].
 - Bounded SPSC Queue
   
-  A improved implementation of [Lamport's SPSC Queue][5].
+  An improved implementation of [Lamport's][5].
   
-#### Benchmark
+##### Benchmark
 
 Be the same as [rigtorp's][4].
 
