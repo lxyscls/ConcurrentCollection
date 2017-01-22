@@ -7,14 +7,14 @@
 #### SPSC Queue
 >In the end of 1970's, [Leslie Lamport][1] proved that, under Sequential Consistency memory model, a Single-Producer/Single-Consumer circular buffer can be implemented without using explicit synchronization mechanisms between the producer and the consumer. (From Massimo Torquati's [\<Single-Producer/Single-Consumer Queues on Shared Cache Multi-Core Systems\>][2])
 
-I have found two implementations of Lamport's SPSC Queue from the Internet. One is [KjellKod.cc's][3], other is [rigtorp's][4].
+I have found two implementations of [Lamport's SPSC Queue][5] which is based on circular buffer from the Internet. One is [KjellKod.cc's][3], other is [rigtorp's][4].
 
 - Unbounded SPSC Queue
   
-  A list-based implementation from 1024core's.
+  A list-based implementation from [1024core's][6].
 - Bounded SPSC Queue
   
-  A improved implementation of Lamport's circular buffer.
+  A improved implementation of [Lamport's SPSC Queue][5].
   
 #### Benchmark
 
@@ -30,6 +30,14 @@ Unbounded SPSC Queue
 | #0,#0,#0 & #0,#1,#0             |              137727 |              387 |
 | #0,#0,#0 & #1,#0,#0             |               22787 |              836 |
 
+SPSC Queue
+
+| NUMA Node / Core / Hyper-Thread | Throughput (ops/ms) | Latency RTT (ns) |
+| ------------------------------- | -------------------:| ----------------:|
+| #0,#0,#0 & #0,#0,#1             |              192445 |               63 |
+| #0,#0,#0 & #0,#1,#0             |              190213 |              279 |
+| #0,#0,#0 & #1,#0,#0             |               94403 |              752 |
+
 [rigtorp's][3]
 
 | NUMA Node / Core / Hyper-Thread | Throughput (ops/ms) | Latency RTT (ns) |
@@ -42,3 +50,5 @@ Unbounded SPSC Queue
 [2]: https://arxiv.org/pdf/1012.1824.pdf
 [3]: https://www.codeproject.com/articles/43510/lock-free-single-producer-single-consumer-circular
 [4]: https://github.com/rigtorp/SPSCQueue
+[5]: http://research.microsoft.com/en-us/um/people/lamport/pubs/proving.pdf
+[6]: http://www.1024cores.net/home/lock-free-algorithms/queues/unbounded-spsc-queue
