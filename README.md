@@ -10,7 +10,33 @@
 I have found two implementations of Lamport's SPSC Queue from the Internet. One is [KjellKod.cc's][3], other is [rigtorp's][4].
 
 - Unbounded SPSC Queue
+  
+  A list-based implementation from 1024core's.
 - Bounded SPSC Queue
+  
+  A improved implementation of Lamport's circular buffer.
+  
+#### Benchmark
+
+Be the same as [rigtorp's][4].
+
+The following numbers are for a 2 socket machine with 2 x Intel(R) Xeon(R) CPU E5-2658 v3 @ 2.20GHz.
+
+Unbounded SPSC Queue
+
+| NUMA Node / Core / Hyper-Thread | Throughput (ops/ms) | Latency RTT (ns) |
+| ------------------------------- | -------------------:| ----------------:|
+| #0,#0,#0 & #0,#0,#1             |              242332 |               58 |
+| #0,#0,#0 & #0,#1,#0             |              137727 |              387 |
+| #0,#0,#0 & #1,#0,#0             |               22787 |              836 |
+
+[rigtorp's][3]
+
+| NUMA Node / Core / Hyper-Thread | Throughput (ops/ms) | Latency RTT (ns) |
+| ------------------------------- | -------------------:| ----------------:|
+| #0,#0,#0 & #0,#0,#1             |               41223 |              112 |
+| #0,#0,#0 & #0,#1,#0             |               20061 |              315 |
+| #0,#0,#0 & #1,#0,#0             |               15842 |              722 |
 
 [1]: https://en.wikipedia.org/wiki/Leslie_Lamport
 [2]: https://arxiv.org/pdf/1012.1824.pdf
