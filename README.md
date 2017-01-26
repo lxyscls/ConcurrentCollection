@@ -11,10 +11,7 @@ I have found two implementations of [Lamport's SPSC Queue][5] which is based on 
 
 - Unbounded SPSC Queue
   
-  A list-based implementation from [1024cores'][6].
 - Bounded SPSC Queue
-  
-  An improved implementation of [Lamport's][5].
   
 ##### Benchmark
 
